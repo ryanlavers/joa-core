@@ -41,7 +41,9 @@ public class SunHttpServer extends AbstractServer {
         callMiddleware(ctx);
 
         resp.headers().forEach((key, value) -> {
-          t.getResponseHeaders().add(key, value);
+          if(value != null) {
+            t.getResponseHeaders().add(key, value);
+          }
         });
 
         long respLength = resp.bodySize();
