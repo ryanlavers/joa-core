@@ -2,6 +2,8 @@
 
 A Java web framework inspired by [Koa](https://github.com/koajs/koa) using middleware chaining to define the request processing pipeline
 
+Joa is not particularly useful without some middleware, so check out the [joa-middleware](https://github.com/ryanlavers/joa-middleware) project for middleware you can use as the basis of a simple web application, or as examples to create your own!
+
 ## Examples
 
 Create a server listening on port 8080 that just responds to every request with static text:
