@@ -20,6 +20,11 @@ public interface Request {
   String method();
 
   /**
+   * Returns the request query string (not including the initial question mark)
+   */
+  String rawQuery();
+
+  /**
    * Returns the request query string as a map of key/value pairs
    */
   Map<String, String> queryParams();

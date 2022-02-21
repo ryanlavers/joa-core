@@ -33,15 +33,8 @@ public class SunHttpRequest extends AbstractRequest {
   }
 
   @Override
-  public Map<String, String> queryParams() {
-    String query = xchg.getRequestURI().getQuery();
-    if(query != null) {
-      try {
-        return splitQuery(query);
-      } catch (UnsupportedEncodingException e) {
-      }
-    }
-    return new HashMap<>();
+  public String rawQuery() {
+    return xchg.getRequestURI().getQuery();
   }
 
   // TODO -- combine all values of a multi-valued header with comma

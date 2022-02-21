@@ -25,6 +25,11 @@ public class WrappedRequest implements Request {
   }
 
   @Override
+  public String rawQuery() {
+    return wrapped.method();
+  }
+
+  @Override
   public Map<String, String> queryParams() {
     return wrapped.queryParams();
   }

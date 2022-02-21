@@ -1,5 +1,6 @@
 package ca.lavers.joa.core;
 
+import ca.lavers.joa.core.errors.BadRequestException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -7,10 +8,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Base class providing some methods likely common to all {@link Request} implementations.
@@ -18,6 +16,7 @@ import java.util.Scanner;
 public abstract class AbstractRequest implements Request {
 
   private ObjectMapper objectMapper = new ObjectMapper();
+  private Object parsedBody;
 
   /**
    * Splits the given query string into a Map of key/value pairs.
@@ -32,6 +31,20 @@ public abstract class AbstractRequest implements Request {
       query_pairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
     }
     return query_pairs;
+  }
+
+  @Override
+  public Map<String, String> queryParams() {
+    String query = rawQuery();
+    if(query != null) {
+      try {
+        return splitQuery(query);
+      } catch (Exception e) {
+        // TODO - Pass e to BadRequestException when it takes it
+        throw new BadRequestException("Unable to parse query string");
+      }
+    }
+    return new HashMap<>();
   }
 
   /**
@@ -64,8 +77,12 @@ public abstract class AbstractRequest implements Request {
 
   @Override
   public <T> T parseBody(Class<T> bodyType) throws IOException {
+    if(parsedBody != null && parsedBody.getClass().isAssignableFrom(bodyType)) {
+      return (T) parsedBody;
+    }
     try {
-      return objectMapper.readValue(body(), bodyType);
+      parsedBody = objectMapper.readValue(body(), bodyType);
+      return (T) parsedBody;
     } catch (JsonProcessingException e) {
       throw new IOException("Unable to parse request body", e);
     }
